@@ -88,7 +88,9 @@ export default function useGame({ canvasContainerRef, scale: SCALE }: UseGamePro
         },
       });
 
-      loadSprite("button", "/assets/plus.png");
+      loadSprite("button-1", "/assets/profile.png");
+      loadSprite("button-2", "/assets/projects.png");
+      loadSprite("button-3", "/assets/plus.png");
 
       // Load both backgrounds
       loadSprite("bg-light", "/assets/game-background-v2-v2.webp");
@@ -157,7 +159,7 @@ export default function useGame({ canvasContainerRef, scale: SCALE }: UseGamePro
           outline(2, rgb(0, 0, 0)),
           pos(x, buttonY),
           area({ scale: 0.8 }),
-          sprite("button"),
+          sprite(`button-${i + 1}`),
           scale(1),
           anchor("center"),
           "menu-button",

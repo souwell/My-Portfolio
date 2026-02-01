@@ -71,6 +71,10 @@ export default function useGame() {
         fixed,
         play,
         loadSound,
+        onClick,
+        tween,
+        easings,
+        loadFont,
       } = k;
 
       // --- ASSETS ---
@@ -124,6 +128,15 @@ export default function useGame() {
       });
 
       loadSprite("ink_splat", "/assets/splash.png");
+      loadSprite("title", "/assets/title.png", {
+        sliceX: 5,
+        anims: {
+          idle: { from: 0, to: 4, loop: true, speed: 7 },
+        },
+      });
+
+      loadSprite("title_bg", "/assets/back-teste.png");
+      loadFont("Press Start 2P", "/assets/fonts/PressStart2P-Regular.ttf");
 
       loadSound("score", "/assets/audio/score_increment.wav");
       loadSound("mosquito_spawn", "/assets/audio/mosquito_spawn.wav");
@@ -159,7 +172,7 @@ export default function useGame() {
         bg.play("idle");
 
         let maxHealth = 100;
-        let curHealth = 5;
+        let curHealth = 1;
         let score = 0;
         let startTime = time();
 
@@ -182,7 +195,7 @@ export default function useGame() {
         ]);
 
         const scoreLabel = add([
-          text("0", { size: 10, font: "monospace" }),
+          text("0", { size: 10, font: "Press Start 2P" }),
           pos(5, 5),
           color(255, 255, 255),
           z(100),
@@ -513,7 +526,7 @@ export default function useGame() {
 
             // Visual feedback text
             add([
-              text("-15", { size: 12, font: "monospace" }),
+              text("-15", { size: 12, font: "Press Start 2P" }),
               pos(s.pos),
               color(255, 0, 0),
               anchor("center"),
@@ -651,9 +664,9 @@ export default function useGame() {
         ]);
 
         const gameOverBG = add([
-          opacity(0.8),
+          opacity(1),
           sprite("error-bg"),
-          pos(center().sub(0, 20)),
+          pos(center().sub(0, 30)),
           anchor("center"),
         ]);
 
@@ -666,23 +679,219 @@ export default function useGame() {
         //   color(255, 0, 0)
         // ]);
         add([
-          text(`BUG_FIXED_COUNT=${score}`, { size: 12 }),
+          text(`BUG_FIXED_COUNT=${score}`, { size: 8, font: "Press Start 2P" }),
           pos(center().add(0, 30)),
           anchor("center"),
           color(255, 255, 255)
         ]);
-        add([
-          text("Aperte espaço para tentar novamente", { size: 8 }),
-          pos(center().add(0, 50)),
-          anchor("center"),
-          color(200, 200, 200),
-          "blink"
-        ]);
+
         onUpdate("blink", (t) => { t.opacity = wave(0.2, 1, time() * 4); });
+
+        wait(2, () => {
+          const tryAgain = add([
+            text("Clique para \ntentar novamente", { size: 6, align: "center", font: "Press Start 2P" }),
+            pos(center().add(0, 60)),
+            anchor("center"),
+            color(200, 200, 200),
+            "blink",
+            area()
+          ]);
+          tryAgain.onClick(() => go("game"));
+        });
+      });
+
+      scene("title", () => {
+        add([
+          rect(width(), height()),
+          color(0, 0, 0),
+        ]);
+
+        add([
+          sprite("title_bg"),
+          pos(center()),
+          anchor("center"),
+          scale(1),
+        ]);
+        const titleSpr = add([
+          sprite("title"),
+          pos(center().x, center().y - 45),
+          anchor("center"),
+          scale(1.5),
+        ]);
+        titleSpr.play("idle");
+
+
+        // ---------- MONITOR (LIGANDO) ----------
+        const monitor = add([
+          rect(120, 40),
+          pos(center().x, center().y + 20),
+          anchor("center"),
+          color(20, 20, 20),
+          outline(2, rgb(60, 60, 60)),
+          scale(1, 0),
+          opacity(0.5),
+        ]);
+
+        // animação de ligar (efeito CRT)
+        tween(
+          vec2(1, 0),
+          vec2(1, 1),
+          0.4,
+          (v) => {
+            monitor.scale = v;
+          },
+          easings.easeOutExpo
+        );
+
+        add([
+          text("Feito por SouWell (2026)", { size: 4, font: "Press Start 2P" }),
+          pos(center().x, height() - 10),
+          anchor("center"),
+          opacity(0.8)
+        ]);
+
+        // ---------- TEXTO TYPEWRITER ----------
+        function typeText(txt, posY, size, tag) {
+          let index = 0;
+          const label = add([
+            text("", { size, font: "Press Start 2P" }),
+            pos(center().x - width() / 3.5, posY + 20),
+            anchor("left"),
+            area(),
+            tag,
+          ]);
+
+          loop(0.04, () => {
+            if (index < txt.length) {
+              label.text += txt[index];
+              index++;
+            }
+          });
+
+          return label;
+        }
+
+        wait(0.5, () => {
+          typeText("- Começar o jogo", center().y - 7, 6, "start_btn");
+          typeText("- Como jogar?", center().y + 8, 6, "how_btn");
+        });
+
+        // ---------- INTERAÇÃO ----------
+        wait(1.15, () => {
+          onUpdate("start_btn", (b) => {
+            b.opacity = b.isHovering() ? 1 : 0.7;
+            b.text = b.isHovering() ? "> Começar o jogo" : "- Começar o jogo";
+          });
+
+          onUpdate("how_btn", (b) => {
+            b.opacity = b.isHovering() ? 1 : 0.6;
+            b.text = b.isHovering() ? "> Como jogar?" : "- Como jogar?";
+          });
+        })
+
+        onClick("start_btn", () => go("game"));
+        onClick("how_btn", () => go("howto"));
+
         onKeyPress("space", () => go("game"));
       });
 
-      go("game");
+
+      scene("howto", () => {
+        add([
+          rect(width(), height()),
+          color(8, 8, 12),
+        ]);
+
+        // Título
+        add([
+          text("SOLUCIONANDO BUGS", { size: 9, font: "Press Start 2P" }),
+          pos(center().x, 14),
+          anchor("top"),
+          color(255, 255, 255),
+        ]);
+
+        // Texto principal (resumido)
+        add([
+          text("Clique nos bugs para resolver os problemas do código", { size: 6, width: width() - 20, align: "center" }),
+          pos(12, 28),
+          color(255, 255, 255),
+        ]);
+
+        add([
+          text("Insetos vivos drenam sua vida", { size: 6, width: width() - 20, align: "center" }),
+          pos(12, 42),
+          color(200, 200, 200),
+        ]);
+
+        add([
+          text("Espinhos causam dano ao tocar", { size: 6, width: width() - 20, align: "center" }),
+          pos(12, 50),
+          color(255, 120, 120),
+        ]);
+
+        const bugs = [
+          { sprite: "bug", desc: "Se move de forma imprevísivel" },
+          { sprite: "bug_circle", desc: "Gira em torno do centro" },
+          { sprite: "bug_splash", desc: "Se escapar, suja a tela" },
+          { sprite: "bug_bomb", desc: "Explode se não for parado" },
+        ];
+
+        // Config do grid
+        const cols = 2;
+        const cellW = 60;
+        const cellH = 42;
+
+        const gridStartX = center().x - cellW / 2;
+        const gridStartY = height() - 95;
+
+        bugs.forEach((b, i) => {
+          const col = i % cols;
+          const row = Math.floor(i / cols);
+
+          const x = gridStartX + col * cellW;
+          const y = gridStartY + row * cellH - 5;
+
+          const spr = add([
+            sprite(b.sprite),
+            pos(x, y),
+            anchor("center"),
+            scale(0.6),
+          ]);
+          spr.play("idle");
+
+          add([
+            text(b.desc, {
+              size: 4,
+              width: cellW - 10,
+              align: "center",
+            }),
+            pos(x, y + 14),
+            anchor("top"),
+            color(170, 170, 170),
+          ]);
+        });
+
+        // Voltar
+        const backBtn = add([
+          text("> Clique para voltar <", { size: 5, font: "Press Start 2P", align: "center" }),
+          pos(center().x + 2.5, height() - 18),
+          anchor("center"),
+          area(),
+          opacity(0.7),
+          "blink",
+        ]);
+
+        onUpdate("blink", (t) => {
+          t.opacity = wave(0.3, 1, time() * 4);
+        });
+
+        onKeyPress("escape", () => go("title"));
+        backBtn.onClick(() => go("title"));
+      });
+
+
+
+      go("title");
     }
 
     init();
