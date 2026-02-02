@@ -1,16 +1,20 @@
 "use client";
 
+import { useIsMobile } from "@/app/utils/useIsMobile";
 import { Pointer } from "@/components/ui/pointer";
 import { SmoothCursor } from "@/components/ui/smooth-cursor";
 import React, { useEffect } from "react";
 
 export default function useGame() {
+  const [ready, setReady] = React.useState(false);
   const canvasContainerRef = React.useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     let k: any = null;
 
     async function init() {
+      if (!ready) return;
 
       const kaplay = (await import("kaplay")).default;
 
@@ -34,6 +38,8 @@ export default function useGame() {
         touchToMouse: true,
         background: [0, 0, 0, 0],
       });
+
+      const fontMultiplier = isMobile ? 1.4 : 1.0;
 
       const {
         loadSprite,
@@ -716,7 +722,7 @@ export default function useGame() {
           sprite("title"),
           pos(center().x, center().y - 45),
           anchor("center"),
-          scale(1.5),
+          scale(isMobile ? 1.5 : 1.25),
         ]);
         titleSpr.play("idle");
 
@@ -744,7 +750,7 @@ export default function useGame() {
         );
 
         add([
-          text("Feito por SouWell (2026)", { size: 4, font: "Press Start 2P" }),
+          text("Feito por SouWell (2026)", { size: 4 * fontMultiplier, font: "Press Start 2P" }),
           pos(center().x, height() - 10),
           anchor("center"),
           opacity(0.8)
@@ -812,25 +818,25 @@ export default function useGame() {
 
         // Texto principal (resumido)
         add([
-          text("Clique nos bugs para resolver os problemas do código", { size: 6, width: width() - 20, align: "center" }),
+          text("Clique nos bugs para resolver os problemas do código", { size: 6 * fontMultiplier, width: width() - 20, align: "center" }),
           pos(12, 28),
           color(255, 255, 255),
         ]);
 
         add([
-          text("Insetos vivos drenam sua vida", { size: 6, width: width() - 20, align: "center" }),
-          pos(12, 42),
+          text("Insetos vivos drenam sua vida", { size: 6 * fontMultiplier, width: width() - 20, align: "center" }),
+          pos(12, 45),
           color(200, 200, 200),
         ]);
 
         add([
-          text("Espinhos causam dano ao tocar", { size: 6, width: width() - 20, align: "center" }),
-          pos(12, 50),
+          text("Espinhos causam dano ao tocar", { size: 6 * fontMultiplier, width: width() - 20, align: "center" }),
+          pos(12, 53),
           color(255, 120, 120),
         ]);
 
         const bugs = [
-          { sprite: "bug", desc: "Se move de forma imprevísivel" },
+          { sprite: "bug", desc: isMobile ? "Se move rapidamente" : "Se move de forma imprevísivel" },
           { sprite: "bug_circle", desc: "Gira em torno do centro" },
           { sprite: "bug_splash", desc: "Se escapar, suja a tela" },
           { sprite: "bug_bomb", desc: "Explode se não for parado" },
@@ -861,8 +867,8 @@ export default function useGame() {
 
           add([
             text(b.desc, {
-              size: 4,
-              width: cellW - 10,
+              size: 4 * (fontMultiplier * 1.2),
+              width: cellW - 5,
               align: "center",
             }),
             pos(x, y + 14),
@@ -899,7 +905,11 @@ export default function useGame() {
     return () => {
       if (k && k.destroy) k.destroy();
     }
-  }, []);
+  }, [ready]);
+
+  useEffect(() => {
+    setTimeout(() => setReady(true), 1000);
+  }, [])
 
   return (<div className="w-dvw h-dvh bg-black flex items-center justify-center">
     <div className="gnat-game-container" ref={canvasContainerRef}>
