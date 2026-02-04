@@ -9,7 +9,7 @@ export default function useGame({ canvasContainerRef, scale: SCALE }: UseGamePro
   const [initialized, setInitialized] = useState(false);
 
   const getWidth = () => {
-    return window.innerWidth > 768 ? Math.floor(window.innerWidth * 0.9) : window.innerWidth;
+    return window.innerWidth > 768 ? Math.min(Math.floor(window.innerWidth * 0.9), 1935) : window.innerWidth;
   };
 
   useEffect(() => {
@@ -88,21 +88,36 @@ export default function useGame({ canvasContainerRef, scale: SCALE }: UseGamePro
         },
       });
 
-      loadSprite("button-1", "/assets/profile.png");
-      loadSprite("button-2", "/assets/projects.png");
-      loadSprite("button-3", "/assets/plus.png");
+      loadSprite("button-1", "/assets/p_projects.png", {
+        sliceX: 27,
+        anims: {
+          idle: { from: 0, to: 26, loop: true, speed: 15 },
+        },
+      });
+      loadSprite("button-2", "/assets/b_projects.png", {
+        sliceX: 27,
+        anims: {
+          idle: { from: 0, to: 26, loop: true, speed: 15 },
+        },
+      });
+      loadSprite("button-3", "/assets/b_game.png", {
+        sliceX: 27,
+        anims: {
+          idle: { from: 0, to: 26, loop: true, speed: 15 },
+        },
+      });
 
       // Load both backgrounds
-      loadSprite("bg-light", "/assets/game-background-v2-v2.webp");
-      loadSprite("bg-dark", "/assets/bg-dark.jpg");
+      loadSprite("bg-light", "/assets/bg-light.png");
+      loadSprite("bg-dark", "/assets/bg-dark.png");
 
       const isInitiallyDark = document.documentElement.classList.contains("dark");
       const initialBg = isInitiallyDark ? "bg-dark" : "bg-light";
 
-      for (let i = 0; i < window.innerWidth / 2 / 174; i++) {
+      for (let i = 0; i < window.innerWidth / 2 / 352; i++) {
         add([
           sprite(initialBg),
-          pos(i * 174, 0),
+          pos(i * 352, 0),
           "game-bg"
         ]);
       }
@@ -166,6 +181,7 @@ export default function useGame({ canvasContainerRef, scale: SCALE }: UseGamePro
           { index: i }
         ]);
 
+        button.play?.("idle");
         button.onHover(() => button.scaleTo(1.15));
         button.onHoverEnd(() => button.scaleTo(1));
         button.onClick(() => handleBlock(i));

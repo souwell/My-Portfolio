@@ -227,7 +227,8 @@
   }
 
   body > main {
-    max-width: 90%;
+    width: 90%;
+    max-width: 1920px;
     margin: auto !important;
     border-left: 1px solid var(--border);
     border-right: 1px solid var(--border);
@@ -250,6 +251,10 @@
   .title-name::before {
     left: -0.3rem;
     top: -1rem;
+  }
+
+  section canvas {
+    transform: scale(1.02);
   }
 }
 
