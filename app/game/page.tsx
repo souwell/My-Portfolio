@@ -3,12 +3,26 @@
 import { useIsMobile } from "@/app/utils/useIsMobile";
 import { Pointer } from "@/components/ui/pointer";
 import { SmoothCursor } from "@/components/ui/smooth-cursor";
-import React, { useEffect } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useRef } from "react";
+import { PiArrowLeftBold } from "react-icons/pi";
 
 export default function useGame() {
   const [ready, setReady] = React.useState(false);
   const canvasContainerRef = React.useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
+
+  const router = useRouter();
+  const kInstance = useRef(null);
+
+  const goBack = () => {
+    // console.log(kInstance.current);
+    // if (kInstance.current && kInstance.current.destroy) {
+    //   kInstance.current.destroy();
+    // }
+    router.push("/");
+  }
 
   useEffect(() => {
     let k: any = null;
@@ -38,6 +52,8 @@ export default function useGame() {
         touchToMouse: true,
         background: [0, 0, 0, 0],
       });
+
+      kInstance.current = k;
 
       const fontMultiplier = isMobile ? 1.4 : 1.0;
 
@@ -142,7 +158,7 @@ export default function useGame() {
       });
 
       loadSprite("title_bg", "/assets/back-teste.png");
-      loadFont("Press Start 2P", "/assets/fonts/PressStart2P-Regular.ttf");
+      // loadFont("monospace", "/assets/fonts/PressStart2P-Regular.ttf");
 
       loadSound("score", "/assets/audio/score_increment.wav");
       loadSound("mosquito_spawn", "/assets/audio/mosquito_spawn.wav");
@@ -178,7 +194,7 @@ export default function useGame() {
         bg.play("idle");
 
         let maxHealth = 100;
-        let curHealth = 1;
+        let curHealth = 100;
         let score = 0;
         let startTime = time();
 
@@ -201,7 +217,7 @@ export default function useGame() {
         ]);
 
         const scoreLabel = add([
-          text("0", { size: 10, font: "Press Start 2P" }),
+          text("0", { size: 10, font: "monospace" }),
           pos(5, 5),
           color(255, 255, 255),
           z(100),
@@ -532,7 +548,7 @@ export default function useGame() {
 
             // Visual feedback text
             add([
-              text("-15", { size: 12, font: "Press Start 2P" }),
+              text("-15", { size: 12, font: "monospace" }),
               pos(s.pos),
               color(255, 0, 0),
               anchor("center"),
@@ -685,7 +701,7 @@ export default function useGame() {
         //   color(255, 0, 0)
         // ]);
         add([
-          text(`BUG_FIXED_COUNT=${score}`, { size: 8, font: "Press Start 2P" }),
+          text(`BUG_FIXED_COUNT=${score}`, { size: 10, font: "monospace" }),
           pos(center().add(0, 30)),
           anchor("center"),
           color(255, 255, 255)
@@ -695,7 +711,7 @@ export default function useGame() {
 
         wait(2, () => {
           const tryAgain = add([
-            text("Clique para \ntentar novamente", { size: 6, align: "center", font: "Press Start 2P" }),
+            text("Clique para \ntentar novamente", { size: 8, align: "center", font: "monospace" }),
             pos(center().add(0, 60)),
             anchor("center"),
             color(200, 200, 200),
@@ -750,7 +766,7 @@ export default function useGame() {
         );
 
         add([
-          text("Feito por SouWell (2026)", { size: 4 * fontMultiplier, font: "Press Start 2P" }),
+          text("Feito por SouWell (2026)", { size: 5 * fontMultiplier, font: "monospace" }),
           pos(center().x, height() - 10),
           anchor("center"),
           opacity(0.8)
@@ -760,7 +776,7 @@ export default function useGame() {
         function typeText(txt, posY, size, tag) {
           let index = 0;
           const label = add([
-            text("", { size, font: "Press Start 2P" }),
+            text("", { size, font: "monospace" }),
             pos(center().x - width() / 3.5, posY + 20),
             anchor("left"),
             area(),
@@ -778,8 +794,8 @@ export default function useGame() {
         }
 
         wait(0.5, () => {
-          typeText("- Começar o jogo", center().y - 7, 6, "start_btn");
-          typeText("- Como jogar?", center().y + 8, 6, "how_btn");
+          typeText("- Começar o jogo", center().y - 7, 8, "start_btn");
+          typeText("- Como jogar?", center().y + 8, 8, "how_btn");
         });
 
         // ---------- INTERAÇÃO ----------
@@ -810,7 +826,7 @@ export default function useGame() {
 
         // Título
         add([
-          text("SOLUCIONANDO BUGS", { size: 9, font: "Press Start 2P" }),
+          text("SOLUCIONANDO BUGS", { size: 9, font: "monospace" }),
           pos(center().x, 14),
           anchor("top"),
           color(255, 255, 255),
@@ -879,8 +895,8 @@ export default function useGame() {
 
         // Voltar
         const backBtn = add([
-          text("> Clique para voltar <", { size: 5, font: "Press Start 2P", align: "center" }),
-          pos(center().x + 2.5, height() - 18),
+          text("> Clique para voltar <", { size: 7, font: "monospace", align: "center" }),
+          pos(center().x + 2.5, height() - 13),
           anchor("center"),
           area(),
           opacity(0.7),
@@ -901,10 +917,6 @@ export default function useGame() {
     }
 
     init();
-
-    return () => {
-      if (k && k.destroy) k.destroy();
-    }
   }, [ready]);
 
   useEffect(() => {
@@ -912,6 +924,11 @@ export default function useGame() {
   }, [])
 
   return (<div className="w-dvw h-dvh bg-black flex items-center justify-center">
+
+    <button onClick={goBack} className="absolute top-4 left-4 z-50 text-white border-2 px-4 py-1 rounded-full cursor-none font-semibold flex items-center gap-2">
+      <PiArrowLeftBold />
+      Voltar
+    </button>
     <div className="gnat-game-container" ref={canvasContainerRef}>
     </div>
     <SmoothCursor />

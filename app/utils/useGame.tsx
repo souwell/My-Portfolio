@@ -6,8 +6,6 @@ type UseGameProps = {
 };
 
 export default function useGame({ canvasContainerRef, scale: SCALE }: UseGameProps) {
-  const [initialized, setInitialized] = useState(false);
-
   const getWidth = () => {
     return window.innerWidth > 768 ? Math.min(Math.floor(window.innerWidth * 0.9), 1935) : window.innerWidth;
   };
@@ -35,8 +33,10 @@ export default function useGame({ canvasContainerRef, scale: SCALE }: UseGamePro
 
     async function init(widthSize: number = window.innerWidth) {
       if (!canvasContainerRef) return;
-      setInitialized(true);
+
       const kaplay = (await import("kaplay")).default;
+
+      canvasContainerRef.current.innerHTML = "";
 
       const newCanvas = document.createElement("canvas");
       newCanvas.style.width = `${174 * (widthSize / SCALE / 174)}px`;

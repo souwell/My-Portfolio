@@ -3,25 +3,25 @@ import { SiInstagram, SiLinkedin, SiGithub, SiGmail } from "react-icons/si";
 const contactLinks = [
   {
     name: "Instagram",
-    url: "https://instagram.com/seu_usuario",
+    url: "https://instagram.com/souwell.com",
     icon: SiInstagram,
     color: "hover:text-pink-500",
   },
   {
     name: "LinkedIn",
-    url: "https://linkedin.com/in/seu_usuario",
+    url: "https://www.linkedin.com/in/souwell",
     icon: SiLinkedin,
     color: "hover:text-blue-600",
   },
   {
     name: "GitHub",
-    url: "https://github.com/seu_usuario",
+    url: "https://github.com/souwell",
     icon: SiGithub,
     color: "hover:text-gray-800 dark:hover:text-white",
   },
   {
     name: "Gmail",
-    url: "mailto:seu_email@gmail.com",
+    url: "mailto:contato@souwell.com",
     icon: SiGmail,
     color: "hover:text-red-500",
   },

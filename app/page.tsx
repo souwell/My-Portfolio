@@ -8,6 +8,7 @@ import Projects from "@/app/components/sections/Projects";
 import StarSeparator from "@/app/components/StarSeparator";
 import useGame from "@/app/utils/useGame";
 import { AnimatedThemeToggler } from "@/components/ui/animated-theme-toggler";
+import NavigationButton from "@/app/components/NavigationButton";
 import React from "react";
 
 
@@ -25,6 +26,8 @@ export default function Home() {
         <StarSeparator id="contact" />
         <Contact />
       </main>
+
+      <NavigationButton />
     </>
   );
 }
