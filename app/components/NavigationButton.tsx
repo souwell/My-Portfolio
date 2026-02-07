@@ -39,16 +39,13 @@ export default function NavigationButton() {
       {isAtTop && (
         <button
           onClick={scrollDown}
-          className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 
+          className="md:hidden fixed bottom-8 left-1/2 -translate-x-1/2 z-50 
                      flex items-center gap-2 
                      py-2 px-4
                      bg-background/60 backdrop-blur-sm
                      border border-border
                      rounded-full
-                     text-foreground text-sm font-medium
-                     transition-all duration-300
-                     hover:bg-accent hover:scale-105
-                     animate-bounce"
+                     text-foreground text-sm font-medium"
           aria-label="Scroll down to see more"
         >
           <span className="text-nowrap mb-0.5">Arraste para ver mais</span>

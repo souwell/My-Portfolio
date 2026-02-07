@@ -309,15 +309,36 @@
 } */
 
 .header {
-  background: linear-gradient(#5b8fb9 0% 15%, transparent 15% 100%);
+  background: linear-gradient(#5b8fb9 0% 20%, transparent 20% 100%);
 }
 
-.header button {
+.header button,
+header h2 {
   padding: 0.5rem;
   border-radius: 0px 0px 0.5rem 0.5rem;
   background: #5b8fb9;
 
-  margin-right: 1vw;
   color: #fff;
   cursor: pointer;
+}
+
+.header button {
+  margin-right: 1vw;
+}
+
+.header h2 {
+  margin-right: auto;
+  margin-left: 1vw;
+  font-weight: 600;
+  padding-left: 10px;
+  padding-right: 10px;
+  /* font-size: 0.8rem; */
+  max-height: 35px;
+}
+
+.game-section {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }

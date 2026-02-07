@@ -1,11 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
 type UseGameProps = {
   canvasContainerRef?: React.RefObject<HTMLDivElement | null>;
   scale: number;
 };
 
-export default function useGame({ canvasContainerRef, scale: SCALE }: UseGameProps) {
+type ControlFunctions = {
+  moveLeft: () => void;
+  moveRight: () => void;
+  jump: () => void;
+  stopMoving: () => void;
+};
+
+export default function useGame({ canvasContainerRef, scale: SCALE }: UseGameProps): ControlFunctions {
+  const playerRef = useRef<any>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const movingIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const getWidth = () => {
     return window.innerWidth > 768 ? Math.min(Math.floor(window.innerWidth * 0.9), 1935) : window.innerWidth;
   };
@@ -44,6 +54,7 @@ export default function useGame({ canvasContainerRef, scale: SCALE }: UseGamePro
       newCanvas.style.imageRendering = "pixelated";
 
       const canvas = canvasContainerRef.current.appendChild(newCanvas);
+      canvasRef.current = canvas as HTMLCanvasElement;
       canvasContainerRef.current.style.filter = "";
 
       const k = kaplay({
@@ -199,6 +210,8 @@ export default function useGame({ canvasContainerRef, scale: SCALE }: UseGamePro
       player.play("idle");
       player.flipX = true;
 
+      playerRef.current = player;
+
       onKeyDown("left", () => {
         player.move(-80, 0);
         player.flipX = false;
@@ -237,10 +250,84 @@ export default function useGame({ canvasContainerRef, scale: SCALE }: UseGamePro
 
     init(getWidth());
 
+    const handleScroll = () => {
+      if (window.scrollY === 0 && canvasRef?.current) {
+        canvasRef.current.focus();
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
     return () => {
       if (observer) observer.disconnect();
+      if (movingIntervalRef.current) {
+        clearInterval(movingIntervalRef.current);
+      }
+      window.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
-  return null;
+  // Control functions for external use (mobile buttons)
+  const moveLeft = () => {
+    if (!playerRef.current) return;
+
+    if (movingIntervalRef.current) {
+      clearInterval(movingIntervalRef.current);
+    }
+
+    movingIntervalRef.current = setInterval(() => {
+      if (playerRef.current) {
+        playerRef.current.move(-80, 0);
+        playerRef.current.flipX = false;
+        if (playerRef.current.isGrounded() && playerRef.current.curAnim() !== "walking") {
+          playerRef.current.play("walking");
+        }
+      }
+    }, 16);
+  };
+
+  const moveRight = () => {
+    if (!playerRef.current) return;
+
+    if (movingIntervalRef.current) {
+      clearInterval(movingIntervalRef.current);
+    }
+
+    movingIntervalRef.current = setInterval(() => {
+      if (playerRef.current) {
+        playerRef.current.move(80, 0);
+        playerRef.current.flipX = true;
+        if (playerRef.current.isGrounded() && playerRef.current.curAnim() !== "walking") {
+          playerRef.current.play("walking");
+        }
+      }
+    }, 16);
+  };
+
+  const jump = () => {
+    if (!playerRef.current) return;
+
+    if (playerRef.current.isGrounded()) {
+      playerRef.current.jump(350);
+      playerRef.current.play("jumping");
+    }
+  };
+
+  const stopMoving = () => {
+    if (movingIntervalRef.current) {
+      clearInterval(movingIntervalRef.current);
+      movingIntervalRef.current = null;
+    }
+
+    if (playerRef.current && playerRef.current.isGrounded()) {
+      playerRef.current.play("idle");
+    }
+  };
+
+  return {
+    moveLeft,
+    moveRight,
+    jump,
+    stopMoving,
+  };
 }

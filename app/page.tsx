@@ -11,15 +11,16 @@ import { AnimatedThemeToggler } from "@/components/ui/animated-theme-toggler";
 import NavigationButton from "@/app/components/NavigationButton";
 import React from "react";
 
-
 export default function Home() {
-
   return (
     <>
       <Header />
       <Game />
 
-      <main className="pt-20">
+      <main className="pt-10 md:pt-20">
+        <h2 className="md:hidden text-3xl text-center mb-5 font-light italic">
+          Meu portfólio
+        </h2>
         <Profile />
         <StarSeparator id="projects" />
         <Projects />
