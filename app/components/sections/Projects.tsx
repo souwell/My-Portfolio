@@ -88,7 +88,7 @@ const project3 = {
   links: [
     {
       label: "Acessar o site!",
-      url: "https://wellsousaaa.github.io/Five-Nights-at-Freddys-Web",
+      url: "https://wellsousaaa.github.io/Five-Nights-at-Freddys-Web/",
     },
     {
       label: "Ver código no GitHub!",
