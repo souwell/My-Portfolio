@@ -8,27 +8,27 @@ type Company = {
 
 const companies: Company[] = [
   {
-    src: "https://wendelldesousa.netlify.app/assets/logos/esphere.webp",
+    src: "/assets/logos/esphere.webp",
     alt: "Logotipo da Esphere",
   },
   {
-    src: "https://wendelldesousa.netlify.app/assets/logos/smart.webp",
+    src: "/assets/logos/smart.webp",
     alt: "Logotipo da Smart",
   },
   {
-    src: "https://wendelldesousa.netlify.app/assets/logos/wisebets.webp",
-    alt: "Logotipo da WiseBets",
+    src: "/assets/logos/wise.webp",
+    alt: "Logotipo da Wise",
   },
   {
-    src: "https://wendelldesousa.netlify.app/assets/logos/rifa321.webp",
-    alt: "Logotipo da Rifa321",
+    src: "/assets/logos/r321.webp",
+    alt: "Logotipo da R321",
   },
   {
-    src: "https://wendelldesousa.netlify.app/assets/logos/rifaclick.webp",
-    alt: "Logotipo da RifaClick",
+    src: "/assets/logos/rclick.webp",
+    alt: "Logotipo da RClick",
   },
   {
-    src: "https://wendelldesousa.netlify.app/assets/logos/menuflow.webp",
+    src: "/assets/logos/menuflow.webp",
     alt: "Logotipo da MenuFlow",
   },
 ]
